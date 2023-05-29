@@ -59,8 +59,8 @@ const Cards = () => {
                       <div>
                         <label className="flex gap-2 text-[1.4rem] font-serif items-center">
                           <del>₹{items.price}</del>
-                          <span className="text-sm bg-slate-500 px-[3px] rounded-3xl">
-                            12.96%
+                          <span className="text-sm font-sans bg-red-400 px-[3px] text-white rounded-3xl">
+                            {items.rating}%
                           </span>
                         </label>
                       </div>
