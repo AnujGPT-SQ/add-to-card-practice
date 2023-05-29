@@ -1,0 +1,9 @@
+.cart-btn {
+    color: #ff9f00;
+    transition: all 0.3s ease-in-out;
+}
+
+.cart-btn:hover {
+    color: white;
+    background-color: #ff9f00;
+}
