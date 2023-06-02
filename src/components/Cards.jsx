@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from "react";
 import "./CardsStyle.css";
 import axios from "axios";
+import { AiOutlineHeart } from "react-icons/ai";
+import Cart from "./cart";
 
 const Cards = () => {
   const [data, setData] = useState([]);
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     axios.get("https://dummyjson.com/products").then((response) => {
       setData(response.data);
     });
   }, []);
+
+  const openCart = () => {
+    setOpen(!open);
+  };
   return (
     <>
+      {/* <Cart /> */}
       <div className="wrapper w-[100%] bg-gray-100">
+        {open ? <Cart /> : null}
         <div className="container lg:w-[80%] md:w-[90%] w-[100%] mx-auto ">
-          <div className=" cart-btn lg:w-12 lg:h-12 sm:w-11 sm:h-11 w-10 h-10 cursor-pointer border-2 p-5  border-[#ff9f00]  rounded-lg  fixed lg:right-10 lg:top-5 sm:right-5 sm:top-3 right-2 top-4 flex justify-center items-center transition-all duration-500">
+          <div
+            className=" cart-btn lg:w-12 lg:h-12 sm:w-11 sm:h-11 w-10 h-10 cursor-pointer border-2 p-5  border-[#ff9f00]  rounded-lg  absolute lg:right-10 lg:top-5 sm:right-5 sm:top-3 right-2 top-4 z-10 flex justify-center items-center transition-all duration-500"
+            onClick={openCart}
+          >
             <i class="fa fa-shopping-cart text-[1.9rem]"></i>
             <div className="px-[3px] py-[1px] absolute lg:-right-2 lg:-top-3 sm:-right-2 sm:-top-3 -right-1 -top-4 flex justify-center items-center bg-[#ff9f00] rounded-full">
               <h1 className="text-sm text-white">10</h1>
@@ -33,7 +45,10 @@ const Cards = () => {
               return (
                 <>
                   <div className="bg-white cursor-pointer border-2 p-1 rounded-lg flex flex-col group justify-between">
-                    <div className="w-full h-[20rem] p-1">
+                    <div className="w-full h-[20rem] p-1 relative">
+                      {/* <div className="absolute right-2 top-2 text-[#ff9f00] font-bold text-3xl">
+                        <AiOutlineHeart />
+                      </div> */}
                       <img
                         src={items.thumbnail}
                         className=" w-full h-full object-fill object-center rounded-lg group-hover:scale-105 transition-all duration-500"
@@ -66,13 +81,14 @@ const Cards = () => {
                       </div>
                     </div>
                     <div className="lg:flex justify-between items-center ">
-                      <div className="lg:flex items-center gap-1 cursor-pointer bg-[#ff9f00] text-[#fff] p-[0.5rem] rounded-sm text-center uppercase font-[500]">
+                      <div className="lg:flex items-center gap-1 cursor-pointer bg-[#c4c9c8] text-[#000] p-[0.5rem] rounded-sm text-center uppercase font-[500]">
                         <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                        <label>Buy Now</label>
+                        <label className="cursor-pointer">Buy Now</label>
                       </div>
-                      <div className="flex bg-[#fb641b] text-[#fff] cursor-pointer p-[0.5rem] gap-1 justify-center items-center rounded-sm my-3 uppercase font-[500]">
+                      <div className="flex bg-[#9a9aa1] text-[#000] cursor-pointer p-[0.5rem] gap-1 justify-center items-center rounded-sm my-3 uppercase font-[500]">
                         <i class="fa fa-cart-plus" aria-hidden="true"></i>
-                        <label>Add To Cart</label>
+
+                        <label className="cursor-pointer">Add To Cart</label>
                       </div>
                     </div>
                   </div>
