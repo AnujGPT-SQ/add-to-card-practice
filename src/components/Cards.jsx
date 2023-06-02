@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./CardsStyle.css";
 import axios from "axios";
+
 import { AiOutlineHeart } from "react-icons/ai";
 import Cart from "./cart";
 
 const Cards = () => {
   const [data, setData] = useState([]);
   const [open, setOpen] = useState(false);
+  const [cart, setCart] = useState([]);
+
   useEffect(() => {
     axios.get("https://dummyjson.com/products").then((response) => {
       setData(response.data);
@@ -16,19 +19,26 @@ const Cards = () => {
   const openCart = () => {
     setOpen(!open);
   };
+
+  const addToCart = (cardId) => {
+    const selectedCard = data.products.find((card) => card.id === cardId);
+    if (selectedCard) {
+      setCart([...cart, selectedCard]);
+    }
+  };
+
   return (
     <>
-      {/* <Cart /> */}
+      {open ? <Cart cart={cart} /> : null}
       <div className="wrapper w-[100%] bg-gray-100">
-        {open ? <Cart /> : null}
         <div className="container lg:w-[80%] md:w-[90%] w-[100%] mx-auto ">
           <div
             className=" cart-btn lg:w-12 lg:h-12 sm:w-11 sm:h-11 w-10 h-10 cursor-pointer border-2 p-5  border-[#ff9f00]  rounded-lg  absolute lg:right-10 lg:top-5 sm:right-5 sm:top-3 right-2 top-4 z-10 flex justify-center items-center transition-all duration-500"
             onClick={openCart}
           >
-            <i class="fa fa-shopping-cart text-[1.9rem]"></i>
+            <i className="fa fa-shopping-cart text-[1.9rem]"></i>
             <div className="px-[3px] py-[1px] absolute lg:-right-2 lg:-top-3 sm:-right-2 sm:-top-3 -right-1 -top-4 flex justify-center items-center bg-[#ff9f00] rounded-full">
-              <h1 className="text-sm text-white">10</h1>
+              <h1 className="text-sm text-white">{cart.length}</h1>
             </div>
           </div>
           <div className="heading flex justify-center items-center p-2 border-b-2">
@@ -38,61 +48,61 @@ const Cards = () => {
           </div>
 
           <div className="card-container grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1  gap-2 p-4">
-            {data.products?.map((items) => {
-              const dis_price = (items.price * items.discountPercentage) / 100;
-              const total = items.price - dis_price;
+            {data.products?.map((item) => {
+              const dis_price = (item.price * item.discountPercentage) / 100;
+              const total = item.price - dis_price;
               const decepoint = total.toFixed(2);
               return (
-                <>
-                  <div className="bg-white cursor-pointer border-2 p-1 rounded-lg flex flex-col group justify-between">
-                    <div className="w-full h-[20rem] p-1 relative">
-                      {/* <div className="absolute right-2 top-2 text-[#ff9f00] font-bold text-3xl">
-                        <AiOutlineHeart />
-                      </div> */}
-                      <img
-                        src={items.thumbnail}
-                        className=" w-full h-full object-fill object-center rounded-lg group-hover:scale-105 transition-all duration-500"
-                      />
+                <div
+                  key={item.id}
+                  className="bg-white cursor-pointer border-2 p-1 rounded-lg flex flex-col group justify-between"
+                >
+                  <div className="w-full h-[20rem] p-1 relative">
+                    <img
+                      src={item.thumbnail}
+                      className="w-full h-full object-fill object-center rounded-lg group-hover:scale-105 transition-all duration-500"
+                    />
+                  </div>
+                  <div className="content p-3">
+                    <div>
+                      <label className="text-[1rem] font-serif text-slate-800">
+                        {item.description}
+                      </label>
                     </div>
-                    <div className="content p-3">
-                      <div>
-                        <label className="text-[1rem] font-serif text-slate-800">
-                          {items.description}
-                        </label>
-                      </div>
-                      <div>
-                        <label className="text-[1.4rem] font-serif text-slate-950 font-medium">
-                          {items.brand}
-                        </label>
-                      </div>
-                      <div>
-                        <label className="text-[1.4rem] font-serif items-baseline ">
-                          <span className="">₹</span>
-                          <span className="">{decepoint}</span>
-                        </label>
-                      </div>
-                      <div>
-                        <label className="flex gap-2 text-[1.4rem] font-serif items-center">
-                          <del>₹{items.price}</del>
-                          <span className="text-sm font-sans bg-red-400 px-[3px] text-white rounded-3xl">
-                            {items.rating}%
-                          </span>
-                        </label>
-                      </div>
+                    <div>
+                      <label className="text-[1.4rem] font-serif text-slate-950 font-medium">
+                        {item.brand}
+                      </label>
                     </div>
-                    <div className="lg:flex justify-between items-center ">
-                      <div className="lg:flex items-center gap-1 cursor-pointer bg-[#c4c9c8] text-[#000] p-[0.5rem] rounded-sm text-center uppercase font-[500]">
-                        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                        <label className="cursor-pointer">Buy Now</label>
-                      </div>
-                      <div className="flex bg-[#9a9aa1] text-[#000] cursor-pointer p-[0.5rem] gap-1 justify-center items-center rounded-sm my-3 uppercase font-[500]">
-                        <i class="fa fa-cart-plus" aria-hidden="true"></i>
-
-                        <label className="cursor-pointer">Add To Cart</label>
-                      </div>
+                    <div>
+                      <label className="text-[1.4rem] font-serif items-baseline ">
+                        <span>₹</span>
+                        <span>{decepoint}</span>
+                      </label>
+                    </div>
+                    <div>
+                      <label className="flex gap-2 text-[1.4rem] font-serif items-center">
+                        <del>₹{item.price}</del>
+                        <span className="text-sm font-sans bg-red-400 px-[3px] text-white rounded-3xl">
+                          {item.rating}%
+                        </span>
+                      </label>
                     </div>
                   </div>
-                </>
+                  <div className="lg:flex justify-between items-center ">
+                    <div className="lg:flex items-center gap-1 cursor-pointer bg-[#c4c9c8] text-[#000] p-[0.5rem] rounded-sm text-center uppercase font-[500]">
+                      <i className="fa fa-shopping-cart" aria-hidden="true"></i>
+                      <label className="cursor-pointer">Buy Now</label>
+                    </div>
+                    <div
+                      className="flex bg-[#9a9aa1] text-[#000] cursor-pointer p-[0.5rem] gap-1 justify-center items-center rounded-sm my-3 uppercase font-[500]"
+                      onClick={() => addToCart(item.id)}
+                    >
+                      <i className="fa fa-cart-plus" aria-hidden="true"></i>
+                      <label className="cursor-pointer">Add To Cart</label>
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </div>
