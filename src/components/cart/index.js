@@ -3,20 +3,69 @@ import { AiOutlineCaretDown, AiOutlineCaretUp } from "react-icons/ai";
 import { FcShipped } from "react-icons/fc";
 
 const Cart = (props) => {
-  console.log(props.cart);
-  const [quantity, setQuantity] = useState(1);
-  const [itemID, setItemID] = useState(0);
+  const [cartItems, setCartItems] = useState(props.cart);
+
+  const handleIncrement = (itemId) => {
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.id === itemId) {
+        if (item.quantity < 5) {
+          return { ...item, quantity: item.quantity + 1 };
+        } else {
+          alert("You can't add more than 5");
+          return item;
+        }
+      } else {
+        return item;
+      }
+    });
+
+    setCartItems(updatedCartItems);
+  };
+
+  const handleDecrement = (itemId) => {
+    const updatedCartItems = cartItems.map((item) => {
+      if (item.id === itemId) {
+        if (item.quantity > 1) {
+          return { ...item, quantity: item.quantity - 1 };
+        } else {
+          alert("You can't go less than 1");
+          return item;
+        }
+      } else {
+        return item;
+      }
+    });
+
+    setCartItems(updatedCartItems);
+  };
+
+  const calculateSubtotal = () => {
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
+  };
+
+  const calculateSalesTax = () => {
+    const subtotal = calculateSubtotal();
+    return subtotal * 0.1; // Assuming sales tax is 10% of the subtotal
+  };
+
+  const calculateGrandTotal = () => {
+    const subtotal = calculateSubtotal();
+    const salesTax = calculateSalesTax();
+    return subtotal + salesTax;
+  };
+
   return (
     <>
       <div className="flex relative">
-        {/*   */}
         <div className="flex absolute justify-between gap-1 flex-col select-none lg:w-[20rem] bg-[#ffffffbe] md:w-[20rem] bg- sm:w-[17rem] w-[20rem] backdrop-blur-3xl p-1 right-0 z-10 top-20">
-          {props.cart.map((item) => (
+          {cartItems.map((item) => (
             <div
               key={item.id}
               className="h-12 wrapper flex justify-between gap-1 items-center bg-white"
             >
-              {console.log(`My Item Id = ${item.id}`)}
               <div className="image-section w-14 h-14 rounded-full">
                 <img
                   src={item.thumbnail}
@@ -29,36 +78,24 @@ const Cart = (props) => {
                 Rs.{item.price}
               </div>
               <div className="product-inc-btn items-center text-sm font-sans flex gap-1">
-                <h1>{quantity}</h1>
+                <h1>{item.quantity}</h1>
                 <div className="btn-sec flex flex-col justify-end items-end">
-                  <AiOutlineCaretUp
-                    onClick={() => {
-                      item.id.map((myMatchedId) => {
-                        if (myMatchedId === item.id) {
-                          if (quantity > 1) {
-                            setQuantity(quantity + 1);
-                          } else {
-                            setQuantity(quantity);
-                            alert("You can't go less than 1");
-                          }
-                        }
-                      });
-                    }}
-                  />
+                  <AiOutlineCaretUp onClick={() => handleIncrement(item.id)} />
                   <AiOutlineCaretDown
-                    onClick={() => {
-                      if (quantity > 1) {
-                        setQuantity(quantity - 1);
-                      } else {
-                        setQuantity(quantity);
-                        alert("You can't go less than 1");
-                      }
-                    }}
+                    onClick={() => handleDecrement(item.id)}
                   />
                 </div>
               </div>
               <div className="remove-btn text-sm font-sans">
-                <button className="bg-[#ff3f6c] text-white rounded-sm w-full p-1">
+                <button
+                  className="bg-[#ff3f6c] text-white rounded-sm w-full p-1"
+                  onClick={() => {
+                    const updatedCartItems = cartItems.filter(
+                      (cartItem) => cartItem.id !== item.id
+                    );
+                    setCartItems(updatedCartItems);
+                  }}
+                >
                   Remove
                 </button>
               </div>
@@ -67,11 +104,11 @@ const Cart = (props) => {
           <div className="flex flex-col gap-1 mt-10">
             <div className="flex justify-between items-center border-b-[1px] pb-2 pt-2 text-sm">
               <h1>Subtotal:</h1>
-              <h1>Rs.1200.00</h1>
+              <h1>Rs.{calculateSubtotal().toFixed(2)}</h1>
             </div>
             <div className="flex justify-between items-center border-b-[1px] pb-2 pt-2 text-sm">
               <h1>Sales Tax:</h1>
-              <h1>Rs.12.0</h1>
+              <h1>Rs.{calculateSalesTax().toFixed(2)}</h1>
             </div>
             <div className="flex justify-between items-center border-b-[1px] pb-2 pt-2 text-sm">
               <h1>Coupon:</h1>
@@ -79,7 +116,7 @@ const Cart = (props) => {
             </div>
             <div className="flex justify-between items-center border-b-[1px] pb-2 pt-2 text-sm">
               <h1>Grand Total:</h1>
-              <h1>Rs.1212.00</h1>
+              <h1>Rs.{calculateGrandTotal().toFixed(2)}</h1>
             </div>
             <div className="flex justify-end">
               <div className="w-[50%] flex justify-between items-center mt-10">

@@ -17,21 +17,67 @@ const Cards = () => {
   }, []);
 
   const openCart = () => {
-    setOpen(!open);
+    if (cart.length) {
+      setOpen(!open);
+    }
   };
 
   const addToCart = (cardId) => {
     const selectedCard = data.products.find((card) => card.id === cardId);
-    if (selectedCard) {
-      setCart([...cart, selectedCard]);
+    const existingCard = cart.find((item) => item.id === cardId);
+
+    if (existingCard) {
+      alert("Card already in cart");
+    } else {
+      setCart([...cart, { ...selectedCard, quantity: 1 }]);
     }
+  };
+
+  const handleIncrement = (itemId) => {
+    const updatedCartItems = cart.map((item) => {
+      if (item.id === itemId) {
+        if (item.quantity < 5) {
+          return { ...item, quantity: item.quantity + 1 };
+        } else {
+          alert("You can't add more than 5");
+          return item;
+        }
+      } else {
+        return item;
+      }
+    });
+
+    setCart(updatedCartItems);
+  };
+
+  const handleDecrement = (itemId) => {
+    const updatedCartItems = cart.map((item) => {
+      if (item.id === itemId) {
+        if (item.quantity > 1) {
+          return { ...item, quantity: item.quantity - 1 };
+        } else {
+          alert("You can't go less than 1");
+          return item;
+        }
+      } else {
+        return item;
+      }
+    });
+
+    setCart(updatedCartItems);
   };
 
   return (
     <>
-      {open ? <Cart cart={cart} /> : null}
+      {open ? (
+        <Cart
+          cart={cart}
+          handleIncrement={handleIncrement}
+          handleDecrement={handleDecrement}
+        />
+      ) : null}
       <div className="wrapper w-[100%] bg-gray-100">
-        <div className="container lg:w-[80%] md:w-[90%] w-[100%] mx-auto ">
+        <div className="container lg:w-[80%] md:w-[90%] w-[100%] mx-auto">
           <div
             className=" cart-btn lg:w-12 lg:h-12 sm:w-11 sm:h-11 w-10 h-10 cursor-pointer border-2 p-5  border-[#ff9f00]  rounded-lg  absolute lg:right-10 lg:top-5 sm:right-5 sm:top-3 right-2 top-4 z-10 flex justify-center items-center transition-all duration-500"
             onClick={openCart}
@@ -61,6 +107,7 @@ const Cards = () => {
                     <img
                       src={item.thumbnail}
                       className="w-full h-full object-fill object-center rounded-lg group-hover:scale-105 transition-all duration-500"
+                      alt={item.description}
                     />
                   </div>
                   <div className="content p-3">
@@ -75,7 +122,7 @@ const Cards = () => {
                       </label>
                     </div>
                     <div>
-                      <label className="text-[1.4rem] font-serif items-baseline ">
+                      <label className="text-[1.4rem] font-serif items-baseline">
                         <span>₹</span>
                         <span>{decepoint}</span>
                       </label>
